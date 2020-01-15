@@ -43,7 +43,7 @@
                                     <segment title="walk🚶‍♂️"/>
                                 </segments>
                                 <connections>
-                                    <action selector="modeOfTransport:" destination="BYZ-38-t0r" eventType="valueChanged" id="KcE-8n-wZc"/>
+                                    <action selector="indexChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="yBB-KD-3Rw"/>
                                 </connections>
                             </segmentedControl>
                             <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="7bR-iV-Gwk">

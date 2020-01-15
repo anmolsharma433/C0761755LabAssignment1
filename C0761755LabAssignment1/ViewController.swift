@@ -14,9 +14,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate {
     
     var currentCoordinate = CLLocationCoordinate2D()
     var destinationlocationcoordinates = CLLocationCoordinate2D()
-    
+    var destinations = CLLocationCoordinate2D()
     var travelType: String = "car"
-    
     @IBOutlet weak var zoom: UIStepper!
     @IBAction func zoomFunc(_ sender: UIStepper) {
         if sender.value < 0
@@ -38,14 +37,13 @@ class ViewController: UIViewController,CLLocationManagerDelegate {
         
     }
     
+    
     @IBOutlet weak var modeOfTransport: UISegmentedControl!
     @IBAction func indexChanged(_ sender: UISegmentedControl) {
         
-        let count = mapView.overlays.count
-        if count != 0
-        {
+       
             mapView.removeOverlays(mapView.overlays)
-        }
+        
         
         switch  sender.selectedSegmentIndex {
         case 0:
@@ -83,6 +81,9 @@ class ViewController: UIViewController,CLLocationManagerDelegate {
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+        zoom.value = 0
+        zoom.minimumValue = -5
+        zoom.maximumValue = 5
         
         //Adding the Gesture for long Tap
         let lPress = UITapGestureRecognizer(target: self, action: #selector(longPress))
@@ -112,6 +113,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate {
         annotation.title = "Your Location"
         
         annotation.coordinate = newcoordinate
+        destinations = CLLocationCoordinate2D(latitude: newcoordinate.latitude, longitude: newcoordinate.longitude)
         mapView.addAnnotation(annotation)
         
         
@@ -125,8 +127,8 @@ class ViewController: UIViewController,CLLocationManagerDelegate {
         let lat = userLocation.coordinate.latitude
         let long = userLocation.coordinate.longitude
         
-        let latDelta: CLLocationDegrees = 0.05
-        let longDelta: CLLocationDegrees = 0.05
+        let latDelta: CLLocationDegrees = 0.07
+        let longDelta: CLLocationDegrees = 0.07
         
         let span = MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: longDelta)
         let location = CLLocationCoordinate2D(latitude: lat, longitude: long)
@@ -143,7 +145,7 @@ class ViewController: UIViewController,CLLocationManagerDelegate {
     {
         let request = MKDirections.Request()
         request.source = MKMapItem(placemark: MKPlacemark(coordinate: user, addressDictionary: nil))
-        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination, addressDictionary: nil))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destinations, addressDictionary: nil))
         request.requestsAlternateRoutes = true
         request.transportType = transportType
         let directions = MKDirections(request: request)
@@ -165,7 +167,15 @@ extension ViewController : MKMapViewDelegate
 {
     func mapView(_ mapView: MKMapView, rendererFor overlay :MKOverlay) -> MKOverlayRenderer {
         let renderer = MKPolylineRenderer(polyline: overlay as! MKPolyline)
+        if travelType == "car"{
         renderer.strokeColor = UIColor.cyan
+        renderer.lineWidth = 4
+        }
+        else{
+            renderer.lineDashPattern = [0, 10]
+            renderer.strokeColor = UIColor.green
+            renderer.lineWidth = 4
+        }
         return renderer
     }
     
